@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="container">
+                <input type="submit" id="loginAppear" value="Admin Log In" onclick="displayLogIn()"/>
+                <input type="submit" id="QAappear" value="Submit Question & Answer" onclick="displayInsert()"/>
+            </div>
+        </nav>
+
+        <h1>Lorone: Adventurer's Saga, Questions and Answers Forum</h1>
+        <form id="login" class="login">
+            <input name="username" placeholder="Your username" />
+            <input name="password" placeholder="Your password" type="password" />
+            <input type="submit" value="Admin Log In" href="#"/>
+        </form>
+
+        <form id="insert">
+            <input name="question" placeholder="Your new question" />
+            <input name="answer" placeholder="Your new answer" />
+            <select name="topic">
+                <option value="LASagaRules">Game Rules</option>
+                <option value="mechanics">Mechanical Rules</option>
+                <option value="gods">Gods</option>
+                <option value="worldbuilding">World Building</option>
+            </select>
+            <input type="submit" value="Submit Question & Answer"/>
+        </form>
+
+        <form id="search">
+            <input name="terms" class="termSearchBar" placeholder="Your search terms" />
+            <input type="submit" value="Search"/>
+            <br>
+            <input type="checkbox" id="boxGods" name="boxGods" value="gods">
+            <label for="boxGods">Gods</label>
+            <input type="checkbox" id="boxLASaga" name="boxLASaga" value="LASagaRules">
+            <label for="boxLASaga">LASaga Rules</label>
+            <input type="checkbox" id="boxMechanics" name="boxMechanics" value="mechanics">
+            <label for="boxMechanics">Mechanics</label>
+            <input type="checkbox" id="boxWorldbuilding" name="boxWorldbuilding" value="worldbuilding">
+            <label for="boxWorldbuilding">Worldbuilding</label>
+        </form>
+        <table id="list" class="QATable"></table>
+    </body>
+    <script src='index.js'></script>
+    <script>
+        console.log("Starting up!");
+        var displayLogInText = document.getElementById("login");
+        var displayInsertText = document.getElementById("insert");
+        var displayLogInButton = document.getElementById("loginAppear");
+        var displayQAButton = document.getElementById("QAappear");
+        $.ajax({
+            type: 'GET',
+            url: '/session',
+            success: (res) => {
+                console.log("Logged in!");
+                displayLogInText.style.display = "none";
+                displayInsertText.style.display = "block";
+                displayLogInButton.style.display = "none";
+                displayQAButton.style.display = "block";
+            },
+            error: (res) => {
+                console.log("Not logged in!");
+                displayLogInText.style.display = "block";
+                displayInsertText.style.display = "none";
+                displayLogInButton.style.display = "block";
+                displayQAButton.style.display = "none";
+            },
+        });
+        function displayLogIn() {
+            if (displayLogInText.style.display === "none") {
+                displayLogInText.style.display = "block";
+            } else {
+                displayLogInText.style.display = "none";
+            }
+        }
+        function displayInsert() {
+            if (displayInsertText.style.display === "none") {
+                displayInsertText.style.display = "block";
+            } else {
+                displayInsertText.style.display = "none";
+            }
+        }
+    </script>
+</html>

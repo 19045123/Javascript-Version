@@ -1,0 +1,21 @@
+{
+  "name": "a-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test node src/server.test.js",
+    "start": "node src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.17.2",
+    "natural": "^5.1.13",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "axios": "^0.25.0"
+  }
+}
