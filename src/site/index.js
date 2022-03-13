@@ -21,7 +21,6 @@ function fetchQA(terms, boxGods, boxLASaga, boxMechanics, boxWorldbuilding) {
     });
 }
 
-
 function insertQA(question, answer, topic) {
     $.ajax({
         type: 'POST',
@@ -37,6 +36,8 @@ function insertQA(question, answer, topic) {
             $('#insert input[name="answer"]').val('');
             $('#insert input[name="topic"]').val('');
             fetchQA('');
+            const insertion = $('#suggested-topic');
+            insertion.empty();
         },
     });
 }
@@ -51,9 +52,25 @@ function login(username, password) {
         }),
         contentType: 'application/json',
         success: (res) => {
-            $('#login').remove();
+            loggedInPageState();
         },
     });
+}
+
+function notLoggedPageState() {
+    console.log("Not logged in!");
+    $("#login").hide();
+    $("#loginAppear").show();
+    $("#insert").hide();
+    $("#QAappear").hide();
+}
+
+function loggedInPageState() {
+    console.log("Logged in!");
+    $('#login').remove();
+    $("#loginAppear").remove();
+    $("#insert").hide();
+    $("#QAappear").show();
 }
 
 fetchQA('');
@@ -80,6 +97,24 @@ $('#search').on('submit', (event) => {
     fetchQA(terms, boxGods, boxLASaga, boxMechanics, boxWorldbuilding);
 });
 
+$("#loginAppear").click(function(){
+    $("#login").toggle();
+});
+$("#QAappear").click(function(){
+    $("#insert").toggle();
+});
+
+$.ajax({
+    type: 'GET',
+    url: '/session',
+    success: (res) => {
+        loggedInPageState();
+    },
+    error: (res) => {
+        notLoggedPageState();
+    },
+});
+
 let debounce;
 $('#insert input').on('keydown', () => {
     clearTimeout(debounce);
@@ -90,6 +125,21 @@ $('#insert input').on('keydown', () => {
         if (question && answer) {
             // call your new /classify endpoint with { question, answer }
             // get the result and do ????? with it
-        }
+            $.ajax({
+                type: 'GET',
+                url: '/classify',
+                data: JSON.stringify({
+                    question,
+                    answer,
+                }),
+                contentType: 'application/json',
+                success: (qas) => {
+                    console.log(qas);
+                    const insertion = $('#suggested-topic');
+                    insertion.empty();
+                    insertion.text(`Your question and answer seems to be classified as ${(qas.classification.label)}`);
+                }
+            });
+        };
     }, 250);
 });

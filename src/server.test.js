@@ -8,27 +8,31 @@ let cookie;
 const post = async (endpoint, body) => {
     const headers = {};
     if (cookie) headers.cookie = cookie;
-    const res = await axios.post(`http://localhost:3000/${endpoint}`, body, { headers });
-    if (res.headers['set-cookie']) {
-        cookie = res.headers['set-cookie'][0];
+    try {
+        const res = await axios.post(`http://localhost:3000/${endpoint}`, body, { headers });
+        if (res.headers['set-cookie']) {
+            cookie = res.headers['set-cookie'][0];
+        }
+        return res.data;
+    } catch (err) {
+        return;
     }
-    return res.data;
 }
 
 createServer(async function() {
     await post('register', { username: 'bob', password: 'jim' });
     console.log('Registered bob');
 
-    await assert.rejects(post('insert', { question: 'Can I hack this API?', answer: 'No' }));
+    await assert.strictEqual(await post('insert', { question: 'Can I hack this API?', answer: 'No' }), undefined);
     console.log('Cannot hack this');
 
-    await assert.rejects(post('login', { wrong: 'props' }));
+    await assert.strictEqual(await post('login', { wrong: 'props' }), undefined);
     console.log('Cannot log in with invalid request');
 
-    await assert.rejects(post('login', { username: 'haha', password: 'nobody' }));
+    await assert.strictEqual(await post('login', { username: 'haha', password: 'nobody' }), undefined);
     console.log('Cannot log in with non-existent account');
 
-    await assert.rejects(post('login', { username: 'bob', password: 'wrongpassword' }));
+    await assert.strictEqual(await post('login', { username: 'bob', password: 'wrongpassword' }), undefined);
     console.log('Cannot log in with wrong password');
 
     await post('login', { username: 'bob', password: 'jim' });

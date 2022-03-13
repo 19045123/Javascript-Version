@@ -7,8 +7,8 @@
     <body>
         <nav class="navbar">
             <div class="container">
-                <input type="submit" id="loginAppear" value="Admin Log In" onclick="displayLogIn()"/>
-                <input type="submit" id="QAappear" value="Submit Question & Answer" onclick="displayInsert()"/>
+                <input type="submit" id="loginAppear" value="Admin Log In"/>
+                <input type="submit" id="QAappear" value="Submit Question & Answer"/>
             </div>
         </nav>
 
@@ -28,7 +28,8 @@
                 <option value="gods">Gods</option>
                 <option value="worldbuilding">World Building</option>
             </select>
-            <input type="submit" value="Submit Question & Answer"/>
+            <input type="submit" id="insertSubmission" value="Submit Question & Answer"/>
+            <p id="suggested-topic"></p>
         </form>
 
         <form id="search">
@@ -47,43 +48,4 @@
         <table id="list" class="QATable"></table>
     </body>
     <script src='index.js'></script>
-    <script>
-        console.log("Starting up!");
-        var displayLogInText = document.getElementById("login");
-        var displayInsertText = document.getElementById("insert");
-        var displayLogInButton = document.getElementById("loginAppear");
-        var displayQAButton = document.getElementById("QAappear");
-        $.ajax({
-            type: 'GET',
-            url: '/session',
-            success: (res) => {
-                console.log("Logged in!");
-                displayLogInText.style.display = "none";
-                displayInsertText.style.display = "block";
-                displayLogInButton.style.display = "none";
-                displayQAButton.style.display = "block";
-            },
-            error: (res) => {
-                console.log("Not logged in!");
-                displayLogInText.style.display = "block";
-                displayInsertText.style.display = "none";
-                displayLogInButton.style.display = "block";
-                displayQAButton.style.display = "none";
-            },
-        });
-        function displayLogIn() {
-            if (displayLogInText.style.display === "none") {
-                displayLogInText.style.display = "block";
-            } else {
-                displayLogInText.style.display = "none";
-            }
-        }
-        function displayInsert() {
-            if (displayInsertText.style.display === "none") {
-                displayInsertText.style.display = "block";
-            } else {
-                displayInsertText.style.display = "none";
-            }
-        }
-    </script>
 </html>
