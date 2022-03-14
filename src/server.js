@@ -6,7 +6,6 @@ const { addDocumentAndTrain, classify, loadClassifier, saveClassifier } = requir
 const crypto = require('crypto');
 const performance = require('perf_hooks');
 const { promisify } = require('util');
-const Classifier = require('natural/lib/natural/classifiers/maxent/Classifier');
 
 const db = new sqlite.Database(process.env.NODE_ENV === 'test' ? ':memory:' : './website.db');
 db.run = promisify(db.run.bind(db));
@@ -126,7 +125,8 @@ app.get('/logout', checkLogin, async (req, res) =>{
         return res.status(401).json({ status: 'Forbidden' });
     } else { 
         const sessions = await db.all('delete from sessions where sessionID = ? ', [sessionId]);
-        // console.log('Logged out.');
+        const check = await db.all('select * from sessions');
+        console.log('Logged out.', check);
         return res.json({ status: 'OK' });
     }
 });
@@ -150,7 +150,7 @@ module.exports = async function(cb) {
         console.log('Server started on port 3000');
         setInterval(async () => {
             const sessions = await db.all('delete from sessions where expiresAt < ?', [Date.now()]);
-            console.log('Deleted sessions');
+            console.log('Deleted sessions', sessions);
         }, 600000);
         if (cb) cb();
     });

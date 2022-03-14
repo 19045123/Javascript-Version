@@ -2,6 +2,7 @@ const createServer = require('./server.js');
 const assert = require('assert');
 const axios = require('axios');
 const performance = require('perf_hooks');
+const { get } = require('express/lib/response');
 
 let cookie;
 
@@ -37,6 +38,9 @@ createServer(async function() {
 
     await post('login', { username: 'bob', password: 'jim' });
     console.log('Logged in as bob');
+
+    // await get('logout');
+    // console.log('Logged out bob');
 
     const startTime = performance.performance.now();
     const preload = require('./preload.json');
