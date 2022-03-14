@@ -38,21 +38,12 @@ createServer(async function() {
     await post('login', { username: 'bob', password: 'jim' });
     console.log('Logged in as bob');
 
-    // await post('insert', { question: 'Do androids dream of electric sheep?', answer: 'Maybe' });
-    // console.log('Inserted a question');
-
-    // const rows = await post('search', { terms: 'androids' });
-    // console.log('Fetched a question', rows);
-    // assert(rows.length === 1);
-    // assert(rows[0].question === 'Do androids dream of electric sheep?');
-    // assert(rows[0].answer === 'Maybe');
-
     const startTime = performance.performance.now();
     const preload = require('./preload.json');
     for (const topic in preload) {
         for (const question in preload[topic]) {
             const answer = preload[topic][question];
-            console.log('Inserting', { question, answer, topic });
+            // console.log('Inserting', { question, answer, topic });
             await post('insert', { question, answer, topic });
         }
     }

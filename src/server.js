@@ -98,19 +98,19 @@ const checkLogin = async (req, res, next) => {
         // console.log("didn't break");
         next();
     };
-}
+};
 
 app.post('/insert', checkLogin, async (req, res, next) => {
     const { question, answer, topic } = req.body;
     if (!(question && answer && topic)) return res.status(400).json({ status: 'Bad Request' });
-    // train the classifier here
-    // persist the classifier to SQLite
     try {
         await db.run('insert into qa (question, answer, topic) values (?, ?, ?)', [question, answer, topic]);
     } catch (err) {
         // return next(err);
         return res.status(409).json({ status: 'Conflict' });
     }
+    // train the classifier here
+    // persist the classifier to SQLite
     await addDocumentAndTrain(`${question} ${answer}`, topic);
     await saveClassifier(db);
     return res.json({ status: 'OK' });
@@ -118,14 +118,25 @@ app.post('/insert', checkLogin, async (req, res, next) => {
 
 app.get('/session', checkLogin, async (req, res) => {
     return res.json({ status: 'OK' });
-})
+});
 
-app.get('/classify', async (req, res) => {
+app.get('/logout', checkLogin, async (req, res) =>{
+    const sessionId = req.cookies && req.cookies.session;
+    if (!sessionId) {
+        return res.status(401).json({ status: 'Forbidden' });
+    } else { 
+        const sessions = await db.all('delete from sessions where sessionID = ? ', [sessionId]);
+        // console.log('Logged out.');
+        return res.json({ status: 'OK' });
+    }
+});
+
+app.post('/classify', async (req, res) => {
     const { question, answer } = req.body;
     const classification = await classify(`${question} ${answer}`);
-    console.log(classification);
+    console.log(question, answer, classification);
     return res.json({ classification: classification[0] });
-})
+});
 
 app.use(express.static(path.join(__dirname, 'site')));
 
@@ -139,8 +150,8 @@ module.exports = async function(cb) {
         console.log('Server started on port 3000');
         setInterval(async () => {
             const sessions = await db.all('delete from sessions where expiresAt < ?', [Date.now()]);
-            console.log('Deleted sessions', sessions);
+            console.log('Deleted sessions');
         }, 600000);
         if (cb) cb();
     });
-}
+};

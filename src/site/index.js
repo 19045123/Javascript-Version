@@ -58,19 +58,21 @@ function login(username, password) {
 }
 
 function notLoggedPageState() {
-    console.log("Not logged in!");
+    // console.log("Not logged in!");
     $("#login").hide();
     $("#loginAppear").show();
     $("#insert").hide();
     $("#QAappear").hide();
+    $("#logoutButton").hide();
 }
 
 function loggedInPageState() {
-    console.log("Logged in!");
-    $('#login').remove();
-    $("#loginAppear").remove();
+    // console.log("Logged in!");
+    $('#login').hide();
+    $("#loginAppear").hide();
     $("#insert").hide();
     $("#QAappear").show();
+    $("#logoutButton").show();
 }
 
 fetchQA('');
@@ -115,18 +117,32 @@ $.ajax({
     },
 });
 
+function logOut() {
+    $.ajax({
+        type: 'GET',
+        url: '/logout',
+        success: (res) => {
+            notLoggedPageState();
+        },
+        error: (res) => {
+            loggedInPageState();
+        },
+    });
+}
+
+
 let debounce;
 $('#insert input').on('keydown', () => {
     clearTimeout(debounce);
     debounce = setTimeout(() => {
         const question = $('#insert input[name="question"]').val();
         const answer = $('#insert input[name="answer"]').val();
-        console.log('User has now stopped typing.', { question, answer });
+        // console.log('User has now stopped typing.', { question, answer });
         if (question && answer) {
             // call your new /classify endpoint with { question, answer }
             // get the result and do ????? with it
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: '/classify',
                 data: JSON.stringify({
                     question,
@@ -134,10 +150,10 @@ $('#insert input').on('keydown', () => {
                 }),
                 contentType: 'application/json',
                 success: (qas) => {
-                    console.log(qas);
+                    // console.log(qas);
                     const insertion = $('#suggested-topic');
                     insertion.empty();
-                    insertion.text(`Your question and answer seems to be classified as ${(qas.classification.label)}`);
+                    insertion.text(`Your question and answer seems to be classified as ${(qas.classification.label)}. Make sure your topic is right!`);
                 }
             });
         };
