@@ -60,7 +60,7 @@ app.post('/search', async (req, res) => {
 
     if (!terms) {
         const where = topics.length > 0 ? ` where ${topicOr}` : '';
-        const rows = await db.all(`select question, answer, topic from qa ${where};`, []);
+        const rows = await db.all(`select id, question, answer, topic from qa ${where};`, []);
         return res.json(rows);
     } else {
         // use classifier to classify user's query and determine what topic it's about
@@ -127,9 +127,17 @@ app.get('/logout', checkLogin, async (req, res) =>{
         const sessions = await db.all('delete from sessions where sessionID = ? ', [sessionId]);
         const check = await db.all('select * from sessions');
         console.log('Logged out.', check);
+        res.cookie('session', null, { maxAge: 0 });
         return res.json({ status: 'OK' });
     }
 });
+
+app.delete('/delete/:id', checkLogin, async (req, res) => {
+    const { id } = req.params;
+    await db.all('delete from qa where id = ?', [id]);
+    console.log('Deleted an entry!');
+    return res.json({ status: 'OK' });
+})
 
 app.post('/classify', async (req, res) => {
     const { question, answer } = req.body;

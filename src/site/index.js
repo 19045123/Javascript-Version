@@ -13,9 +13,10 @@ function fetchQA(terms, boxGods, boxLASaga, boxMechanics, boxWorldbuilding) {
         success: (qas) => {
             const list = $('#list');
             list.empty();
-            list.append('<tr><th>Question</th><th>Answer</th><th>Topic</th></tr>');
+            list.append('<tr><th>Question</th><th>Answer</th><th class="topicHeader">Topic</th><th class="deleteHeader">Delete?</th></tr>');
+            console.log(qas);
             for (let qa of qas) {
-                list.append(`<tr><td>${qa.question}</td><td>${qa.answer}</td><td>${qa.topic}</td></tr>`);
+                list.append(`<tr id="QA${qa.id}"><td>${qa.question}</td><td>${qa.answer}</td><td>${qa.topic}</td><td><button class="deleteButton" onclick="deleteQA(${qa.id})">Delete</button></td></tr>`);
             }
         }
     });
@@ -57,22 +58,38 @@ function login(username, password) {
     });
 }
 
+function deleteQA(id) {
+    $.ajax({
+        type: 'POST',
+        url: `/delete/${id}`,
+        success: (res) => {
+            $(`tr#QA${id}`).delete();
+        }
+    });
+}
+
 function notLoggedPageState() {
     // console.log("Not logged in!");
+    $("body").removeClass('loggedIn');
+    $("body").addClass('loggedOut');
     $("#login").hide();
     $("#loginAppear").show();
     $("#insert").hide();
     $("#QAappear").hide();
     $("#logoutButton").hide();
+    $('.deleteButton').hide();
 }
 
 function loggedInPageState() {
     // console.log("Logged in!");
+    $("body").removeClass('loggedOut');
+    $("body").addClass('loggedIn');
     $('#login').hide();
     $("#loginAppear").hide();
     $("#insert").hide();
     $("#QAappear").show();
     $("#logoutButton").show();
+    $('.deleteButton').show();
 }
 
 fetchQA('');

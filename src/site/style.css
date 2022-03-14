@@ -45,3 +45,21 @@ form {
 .insert {
     display: none;
 } */
+
+.loggedOut .deleteButton, .loggedOut .deleteHeader {
+    display: none;
+}
+
+.loggedIn .deleteButton {
+    display: block;
+    width: 100%;
+}
+
+.loggedIn .deleteHeader {
+    display: table-cell;
+    width: 5%;
+}
+
+.topicHeader {
+    width: 7%;
+}
