@@ -134,6 +134,7 @@ app.get('/logout', checkLogin, async (req, res) =>{
 
 app.delete('/delete/:id', checkLogin, async (req, res) => {
     const { id } = req.params;
+    console.log(id);
     await db.all('delete from qa where id = ?', [id]);
     console.log('Deleted an entry!');
     return res.json({ status: 'OK' });

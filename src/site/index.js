@@ -60,11 +60,11 @@ function login(username, password) {
 
 function deleteQA(id) {
     $.ajax({
-        type: 'POST',
+        type: 'delete',
         url: `/delete/${id}`,
         success: (res) => {
-            $(`tr#QA${id}`).delete();
-        }
+            $(`#QA${id}`).remove();
+        },
     });
 }
 
